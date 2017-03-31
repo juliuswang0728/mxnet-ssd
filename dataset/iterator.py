@@ -125,6 +125,8 @@ class DetIter(mx.io.DataIter):
             im_path = self._imdb.image_path_from_index(index)
             img = cv2.imread(im_path)
             gt = self._imdb.label_from_index(index).copy() if self.is_train else None
+            if gt[0][0] == -1:
+                print '!!!!!'
             data, label = self._data_augmentation(img, gt)
             batch_data.append(data)
             if self.is_train:

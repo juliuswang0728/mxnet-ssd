@@ -107,10 +107,13 @@ def get_symbol_train(num_classes=20):
         global_pool=True, kernel=(1,1), name='pool10')
 
     # specific parameters for VGG16 network
+    # the feature maps extracted from the extra SSD layers to be concatenated later
     from_layers = [relu4_3, relu7, relu8_2, relu9_2, relu10_2, pool10]
-    sizes = [[.1], [.2,.276], [.38, .461], [.56, .644], [.74, .825], [.92, 1.01]]
-    ratios = [[1,2,.5], [1,2,.5,3,1./3], [1,2,.5,3,1./3], [1,2,.5,3,1./3], \
-        [1,2,.5,3,1./3], [1,2,.5,3,1./3]]
+    # sizes: I guess it's s_k in SSD paper?
+    sizes = [[.1], [.2, .276], [.38, .461], [.56, .644], [.74, .825], [.92, 1.01]]
+    # ratio: variable a_r in SSD paper
+    ratios = [[1, 2, .5], [1, 2, .5, 3, 1./3], [1, 2, .5, 3, 1./3], [1, 2, .5, 3, 1./3], \
+        [1, 2, .5, 3, 1./3], [1, 2, .5, 3, 1./3]]
     normalizations = [20, -1, -1, -1, -1, -1]
 
     loc_preds, cls_preds, anchor_boxes = multibox_layer(from_layers, \

@@ -6,6 +6,7 @@ import os
 import importlib
 from initializer import CustomInitializer
 from metric import MultiBoxMetric
+from dataset.caltech_pedestrain import load_caltech
 from dataset.iterator import DetIter
 from dataset.pascal_voc import PascalVoc
 from dataset.concat_db import ConcatDB
@@ -63,7 +64,9 @@ def convert_pretrained(name, args):
     ---------
     processed arguments as dict
     """
-    if name == 'vgg16_reduced':
+    #if name == 'vgg16_reduced':
+    # todo: check if it's a correct modification
+    if os.path.basename(name) == 'vgg16_reduced':
         args['conv6_bias'] = args.pop('fc6_bias')
         args['conv6_weight'] = args.pop('fc6_weight')
         args['conv7_bias'] = args.pop('fc7_bias')
@@ -166,6 +169,12 @@ def train_net(net, dataset, image_set, year, devkit_path, batch_size,
             val_imdb = load_pascal(val_set, val_year, devkit_path, False)
         else:
             val_imdb = None
+    elif dataset == 'caltech-pedestrian':
+        imdb = load_caltech(image_set, devkit_path, shuffle=True)
+        if val_set:
+            val_imdb = load_caltech(val_set, devkit_path, shuffle=False)
+        else:
+            val_imdb = None
     else:
         raise NotImplementedError, "Dataset " + dataset + " not supported"
 
@@ -190,7 +199,7 @@ def train_net(net, dataset, image_set, year, devkit_path, batch_size,
         val_iter = None
 
     # load symbol
-    sys.path.append(os.path.join(cfg.ROOT_DIR, 'symbol'))
+    sys.path.append(os.path.join(cfg.ROOT_DIR, 'symbol')) # load symbol_vgg16_reduced pretrained net's symbol
     net = importlib.import_module("symbol_" + net).get_symbol_train(imdb.num_classes)
 
     # define layers with fixed weight/bias
@@ -215,6 +224,7 @@ def train_net(net, dataset, image_set, year, devkit_path, batch_size,
     elif pretrained:
         logger.info("Start training with {} from pretrained model {}"
             .format(ctx_str, pretrained))
+        # load symbols and model parameters from .json and .params, respectively.
         _, args, auxs = mx.model.load_checkpoint(pretrained, epoch)
         args = convert_pretrained(pretrained, args)
     else:

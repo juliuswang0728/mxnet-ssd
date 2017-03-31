@@ -70,6 +70,12 @@ if __name__ == '__main__':
     args = parse_args()
     ctx = [mx.gpu(int(i)) for i in args.gpus.split(',')]
     ctx = mx.cpu() if not ctx else ctx
+    #ctx = [mx.cpu()]
+    #args.dataset = 'caltech-pedestrian'
+    #args.devkit_path = 'data/caltech-pedestrian'
+    #args.data_shape = (320, 240)
+    #args.image_set = 'train'
+    #args.val_image_set = 'val'
     train_net(args.network, args.dataset, args.image_set, args.year,
               args.devkit_path, args.batch_size,
               args.data_shape, (args.mean_r, args.mean_g, args.mean_b),

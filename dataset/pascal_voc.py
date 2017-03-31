@@ -167,6 +167,8 @@ class PascalVoc(Imdb):
                 xmax = float(xml_box.find('xmax').text) / width
                 ymax = float(xml_box.find('ymax').text) / height
                 label.append([cls_id, xmin, ymin, xmax, ymax])
+            if len(label) == 0:
+                print '!!!!!'
             temp.append(np.array(label))
             max_objects = max(max_objects, len(label))
 

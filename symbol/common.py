@@ -126,23 +126,23 @@ def multibox_layer(from_layers, num_classes, sizes=[.2, .95],
         ratio = ratios[k]
         assert len(ratio) > 0, "must provide at least one ratio"
         ratio_str = "(" + ",".join([str(x) for x in ratio]) + ")"
-        num_anchors = len(size) -1 + len(ratio)
+        num_anchors = len(size) - 1 + len(ratio)
 
         # create location prediction layer
         num_loc_pred = num_anchors * 4
-        loc_pred = mx.symbol.Convolution(data=from_layer, kernel=(3,3), \
-            stride=(1,1), pad=(1,1), num_filter=num_loc_pred, \
+        loc_pred = mx.symbol.Convolution(data=from_layer, kernel=(3, 3), \
+            stride=(1, 1), pad=(1, 1), num_filter=num_loc_pred, \
             name="{}_loc_pred_conv".format(from_name))
-        loc_pred = mx.symbol.transpose(loc_pred, axes=(0,2,3,1))
+        loc_pred = mx.symbol.transpose(loc_pred, axes=(0, 2, 3, 1))
         loc_pred = mx.symbol.Flatten(data=loc_pred)
         loc_pred_layers.append(loc_pred)
 
         # create class prediction layer
         num_cls_pred = num_anchors * num_classes
-        cls_pred = mx.symbol.Convolution(data=from_layer, kernel=(3,3), \
+        cls_pred = mx.symbol.Convolution(data=from_layer, kernel=(3, 3), \
             stride=(1,1), pad=(1,1), num_filter=num_cls_pred, \
             name="{}_cls_pred_conv".format(from_name))
-        cls_pred = mx.symbol.transpose(cls_pred, axes=(0,2,3,1))
+        cls_pred = mx.symbol.transpose(cls_pred, axes=(0, 2, 3, 1))
         cls_pred = mx.symbol.Flatten(data=cls_pred)
         cls_pred_layers.append(cls_pred)
 
